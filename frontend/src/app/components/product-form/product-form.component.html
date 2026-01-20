@@ -1,0 +1,277 @@
+<div class="container-fluid py-4">
+  <div class="row">
+    <div class="col-lg-10 mx-auto">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+          <h1 class="h3 mb-1 fw-bold text-dark">Nuevo Producto</h1>
+          <p class="text-muted mb-0">Complete la información del producto y su receta</p>
+        </div>
+        <a routerLink="/products" class="btn btn-outline-secondary">
+          <i class="bi bi-arrow-left me-2"></i>Volver
+        </a>
+      </div>
+
+      <div class="card border-0 shadow-sm mb-4">
+        <div class="card-header bg-white border-bottom">
+          <h5 class="mb-0 fw-semibold">Información del Producto</h5>
+        </div>
+        <div class="card-body p-4">
+          <div *ngIf="showValidationAlert && productForm.invalid" class="alert alert-warning alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-triangle me-2"></i>
+            <strong>Por favor complete todos los campos requeridos.</strong>
+            <button type="button" class="btn-close" (click)="showValidationAlert = false"></button>
+          </div>
+
+          <div *ngIf="successMessage" class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle me-2"></i>{{ successMessage }}
+            <button type="button" class="btn-close" (click)="successMessage = null"></button>
+          </div>
+
+          <div *ngIf="error" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-triangle me-2"></i>{{ error }}
+            <button type="button" class="btn-close" (click)="error = null"></button>
+          </div>
+
+          <form [formGroup]="productForm" (ngSubmit)="onSubmit()" novalidate>
+            <div class="mb-4">
+              <label for="name" class="form-label fw-semibold">
+                Nombre del Producto <span class="text-danger">*</span>
+              </label>
+              <input 
+                type="text" 
+                class="form-control" 
+                id="name"
+                formControlName="name"
+                [class.is-invalid]="isFieldInvalid('name')"
+                [class.is-valid]="isFieldValid('name')"
+                placeholder="Ej: Tortilla de Patatas"
+                maxlength="100"
+                autocomplete="off">
+              <div *ngIf="isFieldInvalid('name')" class="invalid-feedback d-block">
+                {{ getFieldError('name') }}
+              </div>
+              <div class="form-text">Máximo 100 caracteres</div>
+            </div>
+
+            <div class="mb-4">
+              <label for="description" class="form-label fw-semibold">Descripción</label>
+              <textarea 
+                class="form-control" 
+                id="description"
+                formControlName="description"
+                rows="3"
+                placeholder="Descripción detallada del producto (opcional)"
+                maxlength="500"></textarea>
+              <div class="form-text">Máximo 500 caracteres</div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6 mb-4">
+                <label for="price" class="form-label fw-semibold">
+                  Precio Unitario <span class="text-danger">*</span>
+                </label>
+                <div class="input-group">
+                  <span class="input-group-text">$</span>
+                  <input 
+                    type="number" 
+                    class="form-control" 
+                    id="price"
+                    formControlName="price"
+                    [class.is-invalid]="isFieldInvalid('price')"
+                    [class.is-valid]="isFieldValid('price')"
+                    step="0.01"
+                    min="0.01"
+                    placeholder="0.00"
+                    autocomplete="off">
+                  <div *ngIf="isFieldInvalid('price')" class="invalid-feedback d-block">
+                    {{ getFieldError('price') }}
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-6 mb-4">
+                <label for="stock" class="form-label fw-semibold">
+                  Cantidad en Stock <span class="text-danger">*</span>
+                </label>
+                <input 
+                  type="number" 
+                  class="form-control" 
+                  id="stock"
+                  formControlName="stock"
+                  [class.is-invalid]="isFieldInvalid('stock')"
+                  [class.is-valid]="isFieldValid('stock')"
+                  min="0"
+                  placeholder="0"
+                  autocomplete="off">
+                <div *ngIf="isFieldInvalid('stock')" class="invalid-feedback d-block">
+                  {{ getFieldError('stock') }}
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div class="card border-0 shadow-sm mb-4">
+        <div class="card-header bg-white border-bottom">
+          <h5 class="mb-0 fw-semibold">
+            <i class="bi bi-clipboard-data me-2"></i>Receta del Producto (Escandallo)
+          </h5>
+          <small class="text-muted">Agregue los ingredientes necesarios para elaborar este producto</small>
+        </div>
+        <div class="card-body p-4">
+          <div *ngIf="loadingIngredients" class="text-center py-3">
+            <div class="spinner-border spinner-border-sm text-primary"></div>
+            <p class="text-muted mt-2 mb-0">Cargando ingredientes...</p>
+          </div>
+
+          <div *ngIf="!loadingIngredients && ingredients.length === 0" class="alert alert-warning">
+            <i class="bi bi-exclamation-triangle me-2"></i>
+            <strong>No hay ingredientes disponibles.</strong>
+            <a routerLink="/ingredients" class="alert-link ms-2">Crear ingredientes primero</a>
+          </div>
+
+          <div *ngIf="!loadingIngredients && ingredients.length > 0" class="mb-4">
+            <div class="row g-3">
+              <div class="col-md-5">
+                <label class="form-label fw-semibold">Ingrediente</label>
+                <select 
+                  class="form-select" 
+                  [(ngModel)]="selectedIngredientId"
+                  [ngModelOptions]="{standalone: true}">
+                  <option [value]="null">Seleccione un ingrediente...</option>
+                  <option *ngFor="let ingredient of ingredients" [value]="ingredient.id">
+                    {{ ingredient.name }} ({{ ingredient.costPrice | currency:'USD':'symbol':'1.2-2' }}/{{ ingredient.unit }})
+                  </option>
+                </select>
+              </div>
+              <div class="col-md-3">
+                <label class="form-label fw-semibold">Cantidad</label>
+                <input 
+                  type="number" 
+                  class="form-control" 
+                  [(ngModel)]="recipeQuantity"
+                  [ngModelOptions]="{standalone: true}"
+                  step="0.01"
+                  min="0.01"
+                  placeholder="0.00">
+              </div>
+              <div class="col-md-4 d-flex align-items-end">
+                <button 
+                  type="button" 
+                  class="btn btn-primary w-100"
+                  (click)="addRecipe()"
+                  [disabled]="!selectedIngredientId || recipeQuantity <= 0">
+                  <i class="bi bi-plus-lg me-2"></i>Agregar a Receta
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div *ngIf="recipes.length > 0" class="mt-4">
+            <h6 class="fw-semibold mb-3">Ingredientes en la Receta</h6>
+            <div class="table-responsive">
+              <table class="table table-sm table-hover">
+                <thead class="table-light">
+                  <tr>
+                    <th>Ingrediente</th>
+                    <th class="text-end">Cantidad</th>
+                    <th class="text-end">Coste Unitario</th>
+                    <th class="text-end">Coste Total</th>
+                    <th class="text-center" style="width: 80px;">Acción</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let recipe of recipes; let i = index">
+                    <td>
+                      <div class="fw-semibold">{{ recipe.ingredient.name }}</div>
+                      <small class="text-muted">{{ recipe.ingredient.unit }}</small>
+                    </td>
+                    <td class="text-end">
+                      <span class="fw-semibold">{{ recipe.quantity }}</span>
+                    </td>
+                    <td class="text-end">
+                      {{ recipe.ingredient.costPrice | currency:'USD':'symbol':'1.2-2' }}
+                    </td>
+                    <td class="text-end">
+                      <span class="fw-semibold">
+                        {{ (recipe.ingredient.costPrice * recipe.quantity) | currency:'USD':'symbol':'1.2-2' }}
+                      </span>
+                    </td>
+                    <td class="text-center">
+                      <button 
+                        type="button"
+                        class="btn btn-sm btn-outline-danger"
+                        (click)="removeRecipe(i)"
+                        title="Eliminar">
+                        <i class="bi bi-trash"></i>
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+                <tfoot class="table-light">
+                  <tr>
+                    <th colspan="3" class="text-end">Coste Total de la Receta:</th>
+                    <th class="text-end">{{ getRecipeTotalCost() | currency:'USD':'symbol':'1.2-2' }}</th>
+                    <th></th>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
+          </div>
+
+          <div *ngIf="recipes.length === 0 && !loadingIngredients && ingredients.length > 0" class="text-center py-4 text-muted">
+            <i class="bi bi-clipboard display-6 d-block mb-3"></i>
+            <p>No hay ingredientes en la receta. Agregue ingredientes arriba.</p>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="productForm.valid && recipes.length > 0" class="card border-0 shadow-sm mb-4">
+        <div class="card-body">
+          <h6 class="card-title fw-semibold mb-3">Resumen Financiero</h6>
+          <div class="row">
+            <div class="col-md-4 mb-3">
+              <div class="text-muted small">Precio de Venta</div>
+              <div class="h5 mb-0 fw-bold text-primary">
+                {{ productForm.value.price | currency:'USD':'symbol':'1.2-2' }}
+              </div>
+            </div>
+            <div class="col-md-4 mb-3">
+              <div class="text-muted small">Coste de la Receta</div>
+              <div class="h5 mb-0 fw-bold">
+                {{ getRecipeTotalCost() | currency:'USD':'symbol':'1.2-2' }}
+              </div>
+            </div>
+            <div class="col-md-4 mb-3">
+              <div class="text-muted small">Margen Estimado</div>
+              <div class="h5 mb-0 fw-bold" [ngClass]="getEstimatedMargin() < 0 ? 'text-danger' : 'text-success'">
+                {{ getEstimatedMargin() | currency:'USD':'symbol':'1.2-2' }}
+                <span class="fs-6">({{ ((getEstimatedMargin() / productForm.value.price) * 100).toFixed(1) }}%)</span>
+              </div>
+            </div>
+          </div>
+          <div *ngIf="getEstimatedMargin() < 0" class="alert alert-danger mt-3 mb-0">
+            <i class="bi bi-exclamation-triangle me-2"></i>
+            <strong>Advertencia:</strong> El precio de venta es menor que el coste de la receta. Este producto generará pérdidas.
+          </div>
+        </div>
+      </div>
+
+      <div class="d-flex justify-content-end gap-2">
+        <a routerLink="/products" class="btn btn-outline-secondary">
+          Cancelar
+        </a>
+        <button 
+          type="button"
+          class="btn btn-primary"
+          (click)="onSubmit()"
+          [disabled]="productForm.invalid || loading">
+          <span *ngIf="loading" class="spinner-border spinner-border-sm me-2"></span>
+          <span *ngIf="!loading">Crear Producto</span>
+          <span *ngIf="loading">Guardando...</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

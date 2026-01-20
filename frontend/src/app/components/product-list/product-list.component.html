@@ -1,0 +1,252 @@
+<div class="container-fluid py-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h1 class="h3 mb-1 fw-bold text-dark">Gestión de Inventario</h1>
+      <p class="text-muted mb-0">Administración de productos y stock</p>
+    </div>
+    <a routerLink="/products/new" class="btn btn-primary">
+      <i class="bi bi-plus-lg me-2"></i>Nuevo Producto
+    </a>
+  </div>
+
+  <div class="row g-3 mb-4">
+    <div class="col-md-3">
+      <div class="card border-0 shadow-sm h-100">
+        <div class="card-body">
+          <div class="d-flex align-items-center">
+            <div class="flex-shrink-0">
+              <div class="stat-icon bg-primary bg-opacity-10 text-primary rounded p-3">
+                <i class="bi bi-box-seam fs-4"></i>
+              </div>
+            </div>
+            <div class="flex-grow-1 ms-3">
+              <div class="text-muted small text-uppercase fw-semibold">Total Productos</div>
+              <div class="h4 mb-0 fw-bold">{{ products.length }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card border-0 shadow-sm h-100">
+        <div class="card-body">
+          <div class="d-flex align-items-center">
+            <div class="flex-shrink-0">
+              <div class="stat-icon bg-success bg-opacity-10 text-success rounded p-3">
+                <i class="bi bi-currency-dollar fs-4"></i>
+              </div>
+            </div>
+            <div class="flex-grow-1 ms-3">
+              <div class="text-muted small text-uppercase fw-semibold">Valor Inventario</div>
+              <div class="h4 mb-0 fw-bold">{{ getTotalValue() | currency:'USD':'symbol':'1.0-0' }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card border-0 shadow-sm h-100">
+        <div class="card-body">
+          <div class="d-flex align-items-center">
+            <div class="flex-shrink-0">
+              <div class="stat-icon bg-warning bg-opacity-10 text-warning rounded p-3">
+                <i class="bi bi-exclamation-triangle fs-4"></i>
+              </div>
+            </div>
+            <div class="flex-grow-1 ms-3">
+              <div class="text-muted small text-uppercase fw-semibold">Stock Bajo</div>
+              <div class="h4 mb-0 fw-bold">{{ getLowStockCount() }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card border-0 shadow-sm h-100">
+        <div class="card-body">
+          <div class="d-flex align-items-center">
+            <div class="flex-shrink-0">
+              <div class="stat-icon bg-danger bg-opacity-10 text-danger rounded p-3">
+                <i class="bi bi-x-circle fs-4"></i>
+              </div>
+            </div>
+            <div class="flex-grow-1 ms-3">
+              <div class="text-muted small text-uppercase fw-semibold">Sin Stock</div>
+              <div class="h4 mb-0 fw-bold">{{ getOutOfStockCount() }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card border-0 shadow-sm mb-4">
+    <div class="card-body">
+      <div class="row g-3 align-items-end">
+        <div class="col-md-6">
+          <label class="form-label small text-muted fw-semibold">Buscar</label>
+          <div class="input-group">
+            <span class="input-group-text bg-white border-end-0">
+              <i class="bi bi-search text-muted"></i>
+            </span>
+            <input 
+              type="text" 
+              class="form-control border-start-0" 
+              [(ngModel)]="searchTerm"
+              (input)="onSearchChange()"
+              placeholder="Buscar por nombre o descripción...">
+          </div>
+        </div>
+        <div class="col-md-3">
+          <label class="form-label small text-muted fw-semibold">Mostrar</label>
+          <select class="form-select" [(ngModel)]="itemsPerPage" (change)="applyFilters()">
+            <option [value]="10">10 por página</option>
+            <option [value]="25">25 por página</option>
+            <option [value]="50">50 por página</option>
+            <option [value]="100">100 por página</option>
+          </select>
+        </div>
+        <div class="col-md-3 text-end">
+          <span class="text-muted small">
+            Mostrando {{ displayedProducts.length }} de {{ filteredProducts.length }} productos
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="loading" class="text-center py-5">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Cargando...</span>
+    </div>
+    <p class="text-muted mt-3 mb-0">Cargando productos...</p>
+  </div>
+
+  <div *ngIf="successMessage" class="alert alert-success alert-dismissible fade show" role="alert">
+    <i class="bi bi-check-circle me-2"></i>{{ successMessage }}
+    <button type="button" class="btn-close" (click)="successMessage = null"></button>
+  </div>
+
+  <div *ngIf="error" class="alert alert-danger alert-dismissible fade show" role="alert">
+    <i class="bi bi-exclamation-triangle me-2"></i>{{ error }}
+    <button type="button" class="btn-close" (click)="error = null"></button>
+  </div>
+
+  <div *ngIf="!loading" class="card border-0 shadow-sm">
+    <div class="card-header bg-white border-bottom">
+      <div class="d-flex justify-content-between align-items-center">
+        <h5 class="mb-0 fw-semibold">Productos</h5>
+        <span class="badge bg-secondary">{{ filteredProducts.length }}</span>
+      </div>
+    </div>
+    <div class="card-body p-0">
+      <div *ngIf="displayedProducts.length === 0" class="text-center py-5">
+        <i class="bi bi-inbox display-4 text-muted"></i>
+        <p class="text-muted mt-3 mb-0">No se encontraron productos</p>
+        <a *ngIf="products.length === 0" routerLink="/products/new" class="btn btn-primary mt-3">
+          <i class="bi bi-plus-lg me-2"></i>Crear primer producto
+        </a>
+      </div>
+      
+      <div *ngIf="displayedProducts.length > 0" class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+          <thead class="table-light">
+            <tr>
+              <th scope="col" style="width: 80px;" (click)="sort('id')" class="cursor-pointer">
+                <div class="d-flex align-items-center">
+                  <span>ID</span>
+                  <i [class]="'bi ' + getSortIcon('id') + ' ms-2 small'"></i>
+                </div>
+              </th>
+              <th scope="col" (click)="sort('name')" class="cursor-pointer">
+                <div class="d-flex align-items-center">
+                  <span>Nombre</span>
+                  <i [class]="'bi ' + getSortIcon('name') + ' ms-2 small'"></i>
+                </div>
+              </th>
+              <th scope="col">Descripción</th>
+              <th scope="col" style="width: 120px;" (click)="sort('price')" class="text-end cursor-pointer">
+                <div class="d-flex align-items-center justify-content-end">
+                  <span>Precio</span>
+                  <i [class]="'bi ' + getSortIcon('price') + ' ms-2 small'"></i>
+                </div>
+              </th>
+              <th scope="col" style="width: 120px;" (click)="sort('stock')" class="text-center cursor-pointer">
+                <div class="d-flex align-items-center justify-content-center">
+                  <span>Stock</span>
+                  <i [class]="'bi ' + getSortIcon('stock') + ' ms-2 small'"></i>
+                </div>
+              </th>
+              <th scope="col" style="width: 140px;" class="text-end">Valor Total</th>
+              <th scope="col" style="width: 100px;" class="text-center">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let product of displayedProducts">
+              <td class="text-muted fw-semibold">#{{ product.id }}</td>
+              <td>
+                <div class="fw-semibold">{{ product.name }}</div>
+              </td>
+              <td>
+                <span class="text-muted small">{{ product.description || '-' }}</span>
+              </td>
+              <td class="text-end">
+                <span class="fw-semibold">{{ product.price | currency:'USD':'symbol':'1.2-2' }}</span>
+              </td>
+              <td class="text-center">
+                <span [class]="getStockBadgeClass(product.stock)">
+                  {{ product.stock }}
+                </span>
+              </td>
+              <td class="text-end">
+                <span class="fw-semibold text-success">
+                  {{ (product.price * product.stock) | currency:'USD':'symbol':'1.2-2' }}
+                </span>
+              </td>
+              <td class="text-center">
+                <div class="btn-group" role="group">
+                  <button 
+                    type="button" 
+                    class="btn btn-sm btn-outline-primary"
+                    (click)="openRecipeModal(product.id!)"
+                    title="Ver Escandallo">
+                    <i class="bi bi-clipboard-data"></i>
+                  </button>
+                  <button 
+                    type="button" 
+                    class="btn btn-sm btn-outline-danger"
+                    (click)="deleteProduct(product.id!)"
+                    title="Eliminar">
+                    <i class="bi bi-trash"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    
+    <div *ngIf="totalPages > 1" class="card-footer bg-white border-top">
+      <nav aria-label="Paginación">
+        <ul class="pagination mb-0 justify-content-center">
+          <li class="page-item" [class.disabled]="currentPage === 1">
+            <a class="page-link" (click)="goToPage(currentPage - 1)" aria-label="Anterior">
+              <i class="bi bi-chevron-left"></i>
+            </a>
+          </li>
+          <li *ngFor="let page of getPages()" class="page-item" [class.active]="page === currentPage">
+            <a class="page-link" (click)="goToPage(page)">{{ page }}</a>
+          </li>
+          <li class="page-item" [class.disabled]="currentPage === totalPages">
+            <a class="page-link" (click)="goToPage(currentPage + 1)" aria-label="Siguiente">
+              <i class="bi bi-chevron-right"></i>
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+  
+  <app-recipe-modal [productId]="selectedProductId || 0"></app-recipe-modal>
+</div>

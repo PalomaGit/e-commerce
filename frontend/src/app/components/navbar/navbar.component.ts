@@ -66,8 +66,8 @@ import { Subject, takeUntil } from 'rxjs';
                 <i class="bi bi-person-circle me-1"></i>{{ username }}
               </a>
               <ul class="dropdown-menu dropdown-menu-end">
-                <li><a class="dropdown-item" routerLink="/profile">
-                  <i class="bi bi-person me-2"></i>Mi Perfil
+                <li><a class="dropdown-item" (click)="navigateToProfile()">
+                  <i class="bi bi-person-vcard me-2"></i>Mi Perfil
                 </a></li>
                 <li><hr class="dropdown-divider"></li>
                 <li><a class="dropdown-item" (click)="logout()">
@@ -129,5 +129,28 @@ export class NavbarComponent implements OnInit, OnDestroy {
   logout(): void {
     this.authService.logout();
     this.router.navigate(['/login']);
+  }
+
+  navigateToProfile(): void {
+    this.router.navigate(['/profile']);
+    this.closeDropdown();
+  }
+
+  closeDropdown(): void {
+    setTimeout(() => {
+      const dropdownElement = document.querySelector('.dropdown-menu.show');
+      if (dropdownElement) {
+        const dropdown = dropdownElement.closest('.dropdown');
+        if (dropdown) {
+          const bsDropdown = (window as any).bootstrap?.Dropdown?.getInstance(dropdown);
+          if (bsDropdown) {
+            bsDropdown.hide();
+          } else {
+            dropdown.classList.remove('show');
+            dropdown.querySelector('.dropdown-menu')?.classList.remove('show');
+          }
+        }
+      }
+    }, 100);
   }
 }

@@ -37,9 +37,9 @@ import { UserProfile, UpdateProfileRequest, ChangePasswordRequest } from '../../
               </div>
               <h4 class="mb-1">{{ getFullName() || profile.username }}</h4>
               <p class="text-muted mb-2">@{{ profile.username }}</p>
-              <div class="mb-3">
+              <div class="mb-3" *ngIf="profile.roles && profile.roles.length > 0">
                 <span *ngFor="let role of profile.roles" class="badge bg-secondary me-1">
-                  {{ role.replace('ROLE_', '') }}
+                  {{ formatRole(role) }}
                 </span>
               </div>
               <p *ngIf="profile.bio" class="text-muted small">{{ profile.bio }}</p>
@@ -362,6 +362,10 @@ export class ProfileComponent implements OnInit {
   getDefaultAvatar(): string {
     const initials = this.getInitials();
     return `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='150' height='150'%3E%3Crect fill='%23007bff' width='150' height='150'/%3E%3Ctext fill='white' font-family='sans-serif' font-size='50' dy='10.5' font-weight='bold' x='50%25' y='50%25' text-anchor='middle'%3E${initials}%3C/text%3E%3C/svg%3E`;
+  }
+
+  formatRole(role: string): string {
+    return role.replace('ROLE_', '');
   }
 }
 

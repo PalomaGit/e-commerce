@@ -66,6 +66,10 @@ import { Subject, takeUntil } from 'rxjs';
                 <i class="bi bi-person-circle me-1"></i>{{ username }}
               </a>
               <ul class="dropdown-menu dropdown-menu-end">
+                <li><a class="dropdown-item" routerLink="/profile">
+                  <i class="bi bi-person me-2"></i>Mi Perfil
+                </a></li>
+                <li><hr class="dropdown-divider"></li>
                 <li><a class="dropdown-item" (click)="logout()">
                   <i class="bi bi-box-arrow-right me-2"></i>Cerrar Sesión
                 </a></li>

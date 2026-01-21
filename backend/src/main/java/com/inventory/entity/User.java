@@ -28,6 +28,21 @@ public class User {
     @Column(nullable = false)
     private String password;
 
+    @Column(name = "first_name", length = 50)
+    private String firstName;
+
+    @Column(name = "last_name", length = 50)
+    private String lastName;
+
+    @Column(name = "phone", length = 20)
+    private String phone;
+
+    @Column(name = "profile_picture", columnDefinition = "TEXT")
+    private String profilePicture;
+
+    @Column(name = "bio", columnDefinition = "TEXT")
+    private String bio;
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
         name = "user_roles",

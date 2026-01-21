@@ -72,7 +72,8 @@ public class SecurityConfig {
         configuration.setAllowedOrigins(Arrays.asList(
             "http://localhost:4200",
             "https://inventory-app-swart-nine.vercel.app",
-            "https://inventory-fh6t48v7j-palomagits-projects.vercel.app"
+            "https://inventory-fh6t48v7j-palomagits-projects.vercel.app",
+            "https://inventory-72duhbquw-palomagits-projects.vercel.app"
         ));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
         configuration.setAllowedHeaders(Arrays.asList("*"));

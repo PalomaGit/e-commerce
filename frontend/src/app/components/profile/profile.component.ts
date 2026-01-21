@@ -21,7 +21,7 @@ import { UserProfile, UpdateProfileRequest, ChangePasswordRequest } from '../../
                   [alt]="profile.username"
                   class="rounded-circle border border-3 border-primary"
                   style="width: 150px; height: 150px; object-fit: cover;"
-                  onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'150\' height=\'150\'%3E%3Crect fill=\'%23ddd\' width=\'150\' height=\'150\'/%3E%3Ctext fill=\'%23999\' font-family=\'sans-serif\' font-size=\'50\' dy=\'10.5\' font-weight=\'bold\' x=\'50%25\' y=\'50%25\' text-anchor=\'middle\'%3E{{ getInitials() }}%3C/text%3E%3C/svg%3E'">
+                  (error)="$any($event.target).src = getDefaultAvatar()">
                 <button 
                   class="btn btn-sm btn-primary position-absolute bottom-0 end-0 rounded-circle"
                   (click)="triggerFileInput()"

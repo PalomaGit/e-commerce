@@ -1,5 +1,13 @@
 # Sistema de Cálculo de Costes
 
+## Enlace a página funcionando
+
+https://inventory-app-swart-nine.vercel.app/
+
+- Frontend desplegado con Vercel
+- Backend y BBDD (Postgre) desplegado con Render
+- Valorando desplegar BBDD con Neon.tech ya que Render solo ofrece 90 días de prueba.
+
 ## 🎯 Funcionalidades
 
 ### CRUD Completo de Productos

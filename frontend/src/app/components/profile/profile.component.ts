@@ -129,7 +129,7 @@ import { UserProfile, UpdateProfileRequest, ChangePasswordRequest } from '../../
                     class="btn btn-primary"
                     [disabled]="saving">
                     <span *ngIf="saving" class="spinner-border spinner-border-sm me-2"></span>
-                    {{ saving ? 'Guardando...' : 'Guardar Cambios' }}
+                    {{ getSaveButtonText() }}
                   </button>
                   <button 
                     type="button" 
@@ -144,11 +144,11 @@ import { UserProfile, UpdateProfileRequest, ChangePasswordRequest } from '../../
                 <div class="row">
                   <div class="col-md-6 mb-3">
                     <small class="text-muted d-block">Nombre</small>
-                    <div>{{ profile.firstName || '-' }}</div>
+                    <div>{{ profile.firstName || getDefaultText() }}</div>
                   </div>
                   <div class="col-md-6 mb-3">
                     <small class="text-muted d-block">Apellidos</small>
-                    <div>{{ profile.lastName || '-' }}</div>
+                    <div>{{ profile.lastName || getDefaultText() }}</div>
                   </div>
                 </div>
                 <div class="mb-3">
@@ -157,11 +157,11 @@ import { UserProfile, UpdateProfileRequest, ChangePasswordRequest } from '../../
                 </div>
                 <div class="mb-3">
                   <small class="text-muted d-block">Teléfono</small>
-                  <div>{{ profile.phone || '-' }}</div>
+                  <div>{{ profile.phone || getDefaultText() }}</div>
                 </div>
                 <div class="mb-3">
                   <small class="text-muted d-block">Biografía</small>
-                  <div>{{ profile.bio || '-' }}</div>
+                  <div>{{ profile.bio || getDefaultText() }}</div>
                 </div>
               </div>
             </div>
@@ -198,7 +198,7 @@ import { UserProfile, UpdateProfileRequest, ChangePasswordRequest } from '../../
                   class="btn btn-warning"
                   [disabled]="changingPassword">
                   <span *ngIf="changingPassword" class="spinner-border spinner-border-sm me-2"></span>
-                  {{ changingPassword ? 'Cambiando...' : 'Cambiar Contraseña' }}
+                  {{ getChangePasswordButtonText() }}
                 </button>
               </form>
             </div>
@@ -366,6 +366,18 @@ export class ProfileComponent implements OnInit {
 
   formatRole(role: string): string {
     return role.replace('ROLE_', '');
+  }
+
+  getSaveButtonText(): string {
+    return this.saving ? 'Guardando...' : 'Guardar Cambios';
+  }
+
+  getChangePasswordButtonText(): string {
+    return this.changingPassword ? 'Cambiando...' : 'Cambiar Contraseña';
+  }
+
+  getDefaultText(): string {
+    return '-';
   }
 }
 

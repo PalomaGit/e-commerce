@@ -25,7 +25,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
-        if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
+        String path = request.getRequestURI();
+        
+        if ("OPTIONS".equalsIgnoreCase(request.getMethod()) || path.equals("/api/health")) {
             filterChain.doFilter(request, response);
             return;
         }

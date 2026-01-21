@@ -65,19 +65,13 @@ export class ProductListComponent implements OnInit, OnDestroy {
     this.loading = true;
     this.error = null;
     
-    console.log('Cargando productos...');
     this.productService.getAllProducts().subscribe({
       next: (data) => {
-        console.log('Productos recibidos:', data);
         this.products = data || [];
         this.applyFilters();
         this.loading = false;
-        if (this.products.length === 0) {
-          console.warn('No se recibieron productos');
-        }
       },
       error: (err) => {
-        console.error('Error loading products:', err);
         this.error = err.message || 'No se pudieron cargar los productos. Verifique la conexión con el servidor.';
         this.toastService.error(err.message || 'Error al cargar productos');
         this.loading = false;
@@ -174,10 +168,9 @@ export class ProductListComponent implements OnInit, OnDestroy {
           this.loadProducts();
           setTimeout(() => this.successMessage = null, 5000);
         },
-        error: (err) => {
+        error: () => {
           this.error = 'Error al eliminar el producto. Por favor, intente nuevamente.';
           this.toastService.error('Error al eliminar producto');
-          console.error('Error deleting product:', err);
         }
       });
     }

@@ -140,7 +140,6 @@ export class ProductFormComponent implements OnInit {
           this.error = this.getErrorMessage(err);
           this.toastService.error(this.getErrorMessage(err));
           this.loading = false;
-          console.error('Error creating product:', err);
         }
       });
     } else {

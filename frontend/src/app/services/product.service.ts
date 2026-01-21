@@ -79,12 +79,6 @@ export class ProductService {
       }
     }
     
-    console.error('ProductService Error:', {
-      status: error.status,
-      message: errorMessage,
-      error: error.error
-    });
-    
     return throwError(() => new Error(errorMessage));
   }
 }

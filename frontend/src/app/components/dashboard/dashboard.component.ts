@@ -268,10 +268,8 @@ export class DashboardComponent implements OnInit {
         this.products = products;
         this.calculateMetrics();
         this.loading = false;
-        console.log('Productos cargados:', products.length);
       },
       error: (err) => {
-        console.error('Error al cargar productos:', err);
         this.toastService.error('Error al cargar productos: ' + (err.message || 'Error desconocido'));
         this.loading = false;
       }
@@ -281,10 +279,8 @@ export class DashboardComponent implements OnInit {
       next: (ingredients) => {
         this.ingredients = ingredients;
         this.calculateIngredientMetrics();
-        console.log('Ingredientes cargados:', ingredients.length);
       },
-      error: (err) => {
-        console.error('Error al cargar ingredientes:', err);
+      error: () => {
       }
     });
   }

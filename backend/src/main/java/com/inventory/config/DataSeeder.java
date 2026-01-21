@@ -7,7 +7,6 @@ import com.inventory.repository.IngredientRepository;
 import com.inventory.repository.ProductRepository;
 import com.inventory.repository.ProductRecipeRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
@@ -16,7 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
-@Slf4j
 @Component
 @RequiredArgsConstructor
 @Order(2)
@@ -29,24 +27,11 @@ public class DataSeeder implements CommandLineRunner {
     @Override
     @Transactional
     public void run(String... args) {
-        try {
-            if (ingredientRepository.count() == 0) {
-                log.info("Inicializando ingredientes...");
-                seedIngredients();
-                log.info("Ingredientes inicializados correctamente");
-            } else {
-                log.info("Ya existen ingredientes en la base de datos");
-            }
-            
-            if (productRepository.count() == 0) {
-                log.info("Inicializando productos...");
-                seedProducts();
-                log.info("Productos inicializados correctamente");
-            } else {
-                log.info("Ya existen productos en la base de datos");
-            }
-        } catch (Exception e) {
-            log.error("Error al inicializar datos: {}", e.getMessage(), e);
+        if (ingredientRepository.count() == 0) {
+            seedIngredients();
+        }
+        if (productRepository.count() == 0) {
+            seedProducts();
         }
     }
 
@@ -105,11 +90,6 @@ public class DataSeeder implements CommandLineRunner {
     @Transactional
     private void seedProducts() {
         List<Ingredient> ingredients = ingredientRepository.findAll();
-        
-        if (ingredients.isEmpty()) {
-            log.warn("No hay ingredientes disponibles para crear productos");
-            return;
-        }
 
         Ingredient huevos = findIngredient(ingredients, "Huevos");
         Ingredient patatas = findIngredient(ingredients, "Patatas");

@@ -33,5 +33,3 @@ public class IngredientService {
         ingredientRepository.deleteById(id);
     }
 }
-
-

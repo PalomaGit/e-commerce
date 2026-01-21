@@ -15,4 +15,4 @@ bootstrapApplication(AppComponent, {
       multi: true
     }
   ]
-}).catch(err => console.error(err));
+});

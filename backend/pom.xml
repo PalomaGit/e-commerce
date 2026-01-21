@@ -15,8 +15,8 @@
     <groupId>com.inventory</groupId>
     <artifactId>inventory-management</artifactId>
     <version>1.0.0</version>
-    <name>Inventory Management System</name>
-    <description>Sistema de Gestión de Inventario con Spring Boot</description>
+    <name>Sistema de Cálculo de Costes</name>
+    <description>Sistema de Cálculo de Costes con Spring Boot</description>
     
     <properties>
         <java.version>17</java.version>

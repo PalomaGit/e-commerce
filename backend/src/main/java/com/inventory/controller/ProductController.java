@@ -13,7 +13,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api/products")
 @RequiredArgsConstructor
-@CrossOrigin(origins = {"http://localhost:4200", "https://inventory-app-swart-nine.vercel.app"})
+@CrossOrigin(origins = {"http://localhost:4200", "https://inventory-app-swart-nine.vercel.app", "https://inventory-fh6t48v7j-palomagits-projects.vercel.app"})
 public class ProductController {
 
     private final ProductService productService;

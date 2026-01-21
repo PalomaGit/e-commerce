@@ -17,7 +17,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/admin")
 @RequiredArgsConstructor
-@CrossOrigin(origins = {"http://localhost:4200", "https://inventory-app-swart-nine.vercel.app"})
+@CrossOrigin(origins = {"http://localhost:4200", "https://inventory-app-swart-nine.vercel.app", "https://inventory-fh6t48v7j-palomagits-projects.vercel.app"})
 public class SeedController {
 
     private final IngredientRepository ingredientRepository;

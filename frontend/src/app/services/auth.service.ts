@@ -8,7 +8,7 @@ import { LoginRequest, RegisterRequest, AuthResponse } from '../models/auth.mode
   providedIn: 'root'
 })
 export class AuthService {
-  private readonly apiUrl = 'http://localhost:8080/api/auth';
+  private readonly apiUrl = 'https://inventory-app-27hd.onrender.com/api/auth';
   private readonly tokenKey = 'auth_token';
   private readonly usernameKey = 'auth_username';
   private authSubject = new BehaviorSubject<boolean>(this.isAuthenticated());

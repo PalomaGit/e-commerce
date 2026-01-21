@@ -9,7 +9,7 @@ import { AuthService } from './auth.service';
   providedIn: 'root'
 })
 export class ProductService {
-  private readonly apiUrl = 'http://localhost:8080/api/products';
+  private readonly apiUrl = 'https://inventory-app-27hd.onrender.com/api/products';
 
   constructor(
     private http: HttpClient,

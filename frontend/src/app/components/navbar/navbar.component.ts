@@ -66,11 +66,11 @@ import { Subject, takeUntil } from 'rxjs';
                 <i class="bi bi-person-circle me-1"></i>{{ username }}
               </a>
               <ul class="dropdown-menu dropdown-menu-end">
-                <li><a class="dropdown-item" (click)="navigateToProfile()">
+                <li><a class="dropdown-item" href="#" (click)="navigateToProfile($event)">
                   <i class="bi bi-person-vcard me-2"></i>Mi Perfil
                 </a></li>
                 <li><hr class="dropdown-divider"></li>
-                <li><a class="dropdown-item" (click)="logout()">
+                <li><a class="dropdown-item" href="#" (click)="logout($event)">
                   <i class="bi bi-box-arrow-right me-2"></i>Cerrar Sesión
                 </a></li>
               </ul>
@@ -126,31 +126,39 @@ export class NavbarComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  logout(): void {
+  logout(event: Event): void {
+    event.preventDefault();
+    event.stopPropagation();
+    this.closeDropdown();
     this.authService.logout();
     this.router.navigate(['/login']);
   }
 
-  navigateToProfile(): void {
-    this.router.navigate(['/profile']);
+  navigateToProfile(event: Event): void {
+    event.preventDefault();
+    event.stopPropagation();
     this.closeDropdown();
+    this.router.navigate(['/profile']).catch(err => {
+      console.error('Error navigating to profile:', err);
+    });
   }
 
   closeDropdown(): void {
-    setTimeout(() => {
-      const dropdownElement = document.querySelector('.dropdown-menu.show');
-      if (dropdownElement) {
-        const dropdown = dropdownElement.closest('.dropdown');
-        if (dropdown) {
-          const bsDropdown = (window as any).bootstrap?.Dropdown?.getInstance(dropdown);
-          if (bsDropdown) {
-            bsDropdown.hide();
-          } else {
-            dropdown.classList.remove('show');
-            dropdown.querySelector('.dropdown-menu')?.classList.remove('show');
+    const dropdownElement = document.querySelector('.dropdown-menu.show');
+    if (dropdownElement) {
+      const dropdown = dropdownElement.closest('.dropdown');
+      if (dropdown) {
+        const bsDropdown = (window as any).bootstrap?.Dropdown?.getInstance(dropdown);
+        if (bsDropdown) {
+          bsDropdown.hide();
+        } else {
+          dropdown.classList.remove('show');
+          const menu = dropdown.querySelector('.dropdown-menu');
+          if (menu) {
+            menu.classList.remove('show');
           }
         }
       }
-    }, 100);
+    }
   }
 }

@@ -73,7 +73,11 @@ export class ProductFormComponent implements OnInit {
       return;
     }
 
-    const ingredient = this.ingredients.find(i => i.id === this.selectedIngredientId);
+    const ingredientId = typeof this.selectedIngredientId === 'string' 
+      ? parseInt(this.selectedIngredientId, 10) 
+      : this.selectedIngredientId;
+    
+    const ingredient = this.ingredients.find(i => i.id === ingredientId);
     if (!ingredient) {
       this.toastService.error('Ingrediente no encontrado');
       return;

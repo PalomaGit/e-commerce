@@ -139,8 +139,8 @@
                   class="form-select" 
                   [(ngModel)]="selectedIngredientId"
                   [ngModelOptions]="{standalone: true}">
-                  <option [value]="null">Seleccione un ingrediente...</option>
-                  <option *ngFor="let ingredient of ingredients" [value]="ingredient.id">
+                  <option [ngValue]="null">Seleccione un ingrediente...</option>
+                  <option *ngFor="let ingredient of ingredients" [ngValue]="ingredient.id">
                     {{ ingredient.name }} ({{ ingredient.costPrice | currency:'USD':'symbol':'1.2-2' }}/{{ ingredient.unit }})
                   </option>
                 </select>

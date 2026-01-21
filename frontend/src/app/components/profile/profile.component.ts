@@ -6,10 +6,10 @@ import { ToastService } from '../../services/toast.service';
 import { UserProfile, UpdateProfileRequest, ChangePasswordRequest } from '../../models/user.model';
 
 @Component({
-  selector: 'app-profile',
-  standalone: true,
-  imports: [CommonModule, FormsModule],
-  template: `
+    selector: 'app-profile',
+    standalone: true,
+    imports: [CommonModule, FormsModule],
+    template: `
     <div class="container-fluid py-4">
       <div class="row">
         <div class="col-lg-4 mb-4">
@@ -36,8 +36,7 @@ import { UserProfile, UpdateProfileRequest, ChangePasswordRequest } from '../../
                   class="d-none">
               </div>
               <h4 class="mb-1">{{ getFullName() || profile.username }}</h4>
-              <p class="text-muted mb-2">@{{ profile.username }}</p>
-              <div class="mb-3" *ngIf="profile.roles && profile.roles.length > 0">
+              <p class="text-muted mb-2">{{ '@' }}{{ profile.username }}</p>              <div class="mb-3" *ngIf="profile.roles && profile.roles.length > 0">
                 <span *ngFor="let role of profile.roles" class="badge bg-secondary me-1">
                   {{ formatRole(role) }}
                 </span>
@@ -207,7 +206,7 @@ import { UserProfile, UpdateProfileRequest, ChangePasswordRequest } from '../../
       </div>
     </div>
   `,
-  styles: [`
+    styles: [`
     .card {
       transition: transform 0.2s;
     }
@@ -217,167 +216,167 @@ import { UserProfile, UpdateProfileRequest, ChangePasswordRequest } from '../../
   `]
 })
 export class ProfileComponent implements OnInit {
-  profile: UserProfile = {
-    id: 0,
-    username: '',
-    email: '',
-    roles: []
-  };
-  
-  editMode = false;
-  saving = false;
-  changingPassword = false;
-  loading = true;
-
-  editForm: UpdateProfileRequest = {};
-  passwordForm: ChangePasswordRequest = {
-    currentPassword: '',
-    newPassword: ''
-  };
-
-  constructor(
-    private userService: UserService,
-    private toastService: ToastService
-  ) {}
-
-  ngOnInit(): void {
-    this.loadProfile();
-  }
-
-  loadProfile(): void {
-    this.loading = true;
-    this.userService.getProfile().subscribe({
-      next: (profile) => {
-        this.profile = profile;
-        this.editForm = {
-          firstName: profile.firstName,
-          lastName: profile.lastName,
-          email: profile.email,
-          phone: profile.phone,
-          bio: profile.bio,
-          profilePicture: profile.profilePicture
-        };
-        this.loading = false;
-      },
-      error: (err) => {
-        this.toastService.error(err.message || 'Error al cargar perfil');
-        this.loading = false;
-      }
-    });
-  }
-
-  saveProfile(): void {
-    this.saving = true;
-    this.userService.updateProfile(this.editForm).subscribe({
-      next: (updated) => {
-        this.profile = updated;
-        this.editMode = false;
-        this.saving = false;
-        this.toastService.success('Perfil actualizado correctamente');
-      },
-      error: (err) => {
-        this.toastService.error(err.message || 'Error al actualizar perfil');
-        this.saving = false;
-      }
-    });
-  }
-
-  cancelEdit(): void {
-    this.editForm = {
-      firstName: this.profile.firstName,
-      lastName: this.profile.lastName,
-      email: this.profile.email,
-      phone: this.profile.phone,
-      bio: this.profile.bio,
-      profilePicture: this.profile.profilePicture
+    profile: UserProfile = {
+        id: 0,
+        username: '',
+        email: '',
+        roles: []
     };
-    this.editMode = false;
-  }
 
-  changePassword(): void {
-    if (this.passwordForm.newPassword.length < 6) {
-      this.toastService.warning('La contraseña debe tener al menos 6 caracteres');
-      return;
+    editMode = false;
+    saving = false;
+    changingPassword = false;
+    loading = true;
+
+    editForm: UpdateProfileRequest = {};
+    passwordForm: ChangePasswordRequest = {
+        currentPassword: '',
+        newPassword: ''
+    };
+
+    constructor(
+        private userService: UserService,
+        private toastService: ToastService
+    ) { }
+
+    ngOnInit(): void {
+        this.loadProfile();
     }
 
-    this.changingPassword = true;
-    this.userService.changePassword(this.passwordForm).subscribe({
-      next: () => {
-        this.passwordForm = { currentPassword: '', newPassword: '' };
-        this.changingPassword = false;
-        this.toastService.success('Contraseña cambiada correctamente');
-      },
-      error: (err) => {
-        this.toastService.error(err.message || 'Error al cambiar contraseña');
-        this.changingPassword = false;
-      }
-    });
-  }
-
-  triggerFileInput(): void {
-    const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement;
-    fileInput?.click();
-  }
-
-  onFileSelected(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    if (input.files && input.files[0]) {
-      const file = input.files[0];
-      if (file.size > 5 * 1024 * 1024) {
-        this.toastService.error('La imagen no puede superar los 5MB');
-        return;
-      }
-
-      const reader = new FileReader();
-      reader.onload = (e: any) => {
-        this.editForm.profilePicture = e.target.result;
-        this.profile.profilePicture = e.target.result;
-        this.userService.updateProfile({ profilePicture: e.target.result }).subscribe({
-          next: () => {
-            this.toastService.success('Foto de perfil actualizada');
-          },
-          error: (err) => {
-            this.toastService.error(err.message || 'Error al actualizar foto');
-          }
+    loadProfile(): void {
+        this.loading = true;
+        this.userService.getProfile().subscribe({
+            next: (profile) => {
+                this.profile = profile;
+                this.editForm = {
+                    firstName: profile.firstName,
+                    lastName: profile.lastName,
+                    email: profile.email,
+                    phone: profile.phone,
+                    bio: profile.bio,
+                    profilePicture: profile.profilePicture
+                };
+                this.loading = false;
+            },
+            error: (err) => {
+                this.toastService.error(err.message || 'Error al cargar perfil');
+                this.loading = false;
+            }
         });
-      };
-      reader.readAsDataURL(file);
     }
-  }
 
-  getFullName(): string {
-    if (this.profile.firstName || this.profile.lastName) {
-      return `${this.profile.firstName || ''} ${this.profile.lastName || ''}`.trim();
+    saveProfile(): void {
+        this.saving = true;
+        this.userService.updateProfile(this.editForm).subscribe({
+            next: (updated) => {
+                this.profile = updated;
+                this.editMode = false;
+                this.saving = false;
+                this.toastService.success('Perfil actualizado correctamente');
+            },
+            error: (err) => {
+                this.toastService.error(err.message || 'Error al actualizar perfil');
+                this.saving = false;
+            }
+        });
     }
-    return '';
-  }
 
-  getInitials(): string {
-    if (this.profile.firstName && this.profile.lastName) {
-      return `${this.profile.firstName[0]}${this.profile.lastName[0]}`.toUpperCase();
+    cancelEdit(): void {
+        this.editForm = {
+            firstName: this.profile.firstName,
+            lastName: this.profile.lastName,
+            email: this.profile.email,
+            phone: this.profile.phone,
+            bio: this.profile.bio,
+            profilePicture: this.profile.profilePicture
+        };
+        this.editMode = false;
     }
-    return this.profile.username.substring(0, 2).toUpperCase();
-  }
 
-  getDefaultAvatar(): string {
-    const initials = this.getInitials();
-    return `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='150' height='150'%3E%3Crect fill='%23007bff' width='150' height='150'/%3E%3Ctext fill='white' font-family='sans-serif' font-size='50' dy='10.5' font-weight='bold' x='50%25' y='50%25' text-anchor='middle'%3E${initials}%3C/text%3E%3C/svg%3E`;
-  }
+    changePassword(): void {
+        if (this.passwordForm.newPassword.length < 6) {
+            this.toastService.warning('La contraseña debe tener al menos 6 caracteres');
+            return;
+        }
 
-  formatRole(role: string): string {
-    return role.replace('ROLE_', '');
-  }
+        this.changingPassword = true;
+        this.userService.changePassword(this.passwordForm).subscribe({
+            next: () => {
+                this.passwordForm = { currentPassword: '', newPassword: '' };
+                this.changingPassword = false;
+                this.toastService.success('Contraseña cambiada correctamente');
+            },
+            error: (err) => {
+                this.toastService.error(err.message || 'Error al cambiar contraseña');
+                this.changingPassword = false;
+            }
+        });
+    }
 
-  getSaveButtonText(): string {
-    return this.saving ? 'Guardando...' : 'Guardar Cambios';
-  }
+    triggerFileInput(): void {
+        const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement;
+        fileInput?.click();
+    }
 
-  getChangePasswordButtonText(): string {
-    return this.changingPassword ? 'Cambiando...' : 'Cambiar Contraseña';
-  }
+    onFileSelected(event: Event): void {
+        const input = event.target as HTMLInputElement;
+        if (input.files && input.files[0]) {
+            const file = input.files[0];
+            if (file.size > 5 * 1024 * 1024) {
+                this.toastService.error('La imagen no puede superar los 5MB');
+                return;
+            }
 
-  getDefaultText(): string {
-    return '-';
-  }
+            const reader = new FileReader();
+            reader.onload = (e: any) => {
+                this.editForm.profilePicture = e.target.result;
+                this.profile.profilePicture = e.target.result;
+                this.userService.updateProfile({ profilePicture: e.target.result }).subscribe({
+                    next: () => {
+                        this.toastService.success('Foto de perfil actualizada');
+                    },
+                    error: (err) => {
+                        this.toastService.error(err.message || 'Error al actualizar foto');
+                    }
+                });
+            };
+            reader.readAsDataURL(file);
+        }
+    }
+
+    getFullName(): string {
+        if (this.profile.firstName || this.profile.lastName) {
+            return `${this.profile.firstName || ''} ${this.profile.lastName || ''}`.trim();
+        }
+        return '';
+    }
+
+    getInitials(): string {
+        if (this.profile.firstName && this.profile.lastName) {
+            return `${this.profile.firstName[0]}${this.profile.lastName[0]}`.toUpperCase();
+        }
+        return this.profile.username.substring(0, 2).toUpperCase();
+    }
+
+    getDefaultAvatar(): string {
+        const initials = this.getInitials();
+        return `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='150' height='150'%3E%3Crect fill='%23007bff' width='150' height='150'/%3E%3Ctext fill='white' font-family='sans-serif' font-size='50' dy='10.5' font-weight='bold' x='50%25' y='50%25' text-anchor='middle'%3E${initials}%3C/text%3E%3C/svg%3E`;
+    }
+
+    formatRole(role: string): string {
+        return role.replace('ROLE_', '');
+    }
+
+    getSaveButtonText(): string {
+        return this.saving ? 'Guardando...' : 'Guardar Cambios';
+    }
+
+    getChangePasswordButtonText(): string {
+        return this.changingPassword ? 'Cambiando...' : 'Cambiar Contraseña';
+    }
+
+    getDefaultText(): string {
+        return '-';
+    }
 }
 

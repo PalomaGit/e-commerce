@@ -1,4 +1,4 @@
-# Sistema de Gestión de Inventario y de cálculo de costes para hostelería
+# Sistema de Cálculo de Costes
 
 ## 🎯 Funcionalidades
 

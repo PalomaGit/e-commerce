@@ -12,7 +12,7 @@ import { Subject, takeUntil } from 'rxjs';
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark border-bottom border-secondary">
       <div class="container-fluid">
         <a class="navbar-brand fw-bold" routerLink="/dashboard">
-          <i class="bi bi-box-seam me-2"></i>Inventory Pro
+          <i class="bi bi-calculator me-2"></i>Sistema de Cálculo de Costes
         </a>
         <button 
           class="navbar-toggler" 

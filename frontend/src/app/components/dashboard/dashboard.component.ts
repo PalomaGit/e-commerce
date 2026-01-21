@@ -17,7 +17,7 @@ import { RecipeModalComponent } from '../recipe-modal/recipe-modal.component';
       <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
           <h1 class="h3 mb-1 fw-bold text-dark">Dashboard</h1>
-          <p class="text-muted mb-0">Resumen general del inventario</p>
+          <p class="text-muted mb-0">Resumen general del sistema</p>
         </div>
         <div>
           <a routerLink="/products/new" class="btn btn-primary me-2">
@@ -58,7 +58,7 @@ import { RecipeModalComponent } from '../recipe-modal/recipe-modal.component';
                   </div>
                 </div>
                 <div class="flex-grow-1 ms-3">
-                  <div class="text-muted small text-uppercase fw-semibold">Valor Inventario</div>
+                  <div class="text-muted small text-uppercase fw-semibold">Valor Total</div>
                   <div class="h4 mb-0 fw-bold">{{ metrics.totalValue | currency:'USD':'symbol':'1.0-0' }}</div>
                 </div>
               </div>
